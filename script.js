@@ -4,6 +4,7 @@ const form = document.querySelector(".form");
 const placeStartBtn = document.getElementById("place-start");
 const placeEndBtn = document.getElementById("place-end");
 const placeWallBtn = document.getElementById("place-walls");
+const runAlgorithmBtn = document.getElementById("run-algorithm");
 const resetBtn = document.getElementById("reset");
 
 /* CONSTANTS & Global variables*/
@@ -16,7 +17,6 @@ let isPlacingEnd = false;
 let isPlacingWalls = false;
 
 // Functions
-
 function setCanvasDimensions() {
   canvas.height = gridContainer.clientHeight;
   canvas.width = gridContainer.clientWidth;
@@ -54,7 +54,6 @@ function drawGrid() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // need to understand cellWidth/Height?
   const cellWidth = canvas.width / cols;
   const cellHeight = canvas.height / rows;
 
@@ -79,11 +78,6 @@ function drawGrid() {
       ctx.strokeRect(x, y, cellWidth, cellHeight);
     }
   }
-}
-
-function resetAll() {
-  grid = initializeGrid();
-  drawGrid();
 }
 
 // Function to handle node placement
@@ -132,7 +126,6 @@ function getAllNodes(grid) {
   return nodes;
 }
 
-// ?
 function getNeighbors(node, grid) {
   const neighbors = [];
   const { row, col } = node;
@@ -147,32 +140,31 @@ function getNeighbors(node, grid) {
   );
 }
 
+// backtracing the shortest-path from endNode to startNode
 function findShortestPath(endNode) {
-  const path = [];
+  const shortestPath = [];
   let currentNode = endNode;
 
   while (currentNode != null) {
-    path.unshift(currentNode);
+    shortestPath.unshift(currentNode); // add current node at the front
     currentNode = currentNode.previousNode;
   }
-  return path;
+  return shortestPath;
 }
 
 function dijkstra(startNode, endNode, grid) {
   const visitedNodes = [];
   const unvisitedNodes = getAllNodes(grid);
 
+  // startNode && endNode coming from when clicking on run-algo btn which calls visualizationAlgorithm func which calls for example dijkstra func
   startNode.distance = 0;
 
   while (unvisitedNodes.length > 0) {
-    // simulating priority queue
-    unvisitedNodes.sort((a, b) => a.distance - b.distance);
-
-    const closestNode = unvisitedNodes.shift(); // extract first item of unvisitedNodes array
+    unvisitedNodes.sort((a, b) => a.distance - b.distance); // simulating priority queue
+    const closestNode = unvisitedNodes.shift(); // extract first node of unvisitedNodes array
 
     if (closestNode.isWall) continue; // disregard walls
 
-    // If the closest node's distance is Infinity, the end node is unreachable? /* my catch  */
     if (closestNode.distance === Infinity) {
       console.log("the end node is unreachable");
       return { visitedNodes, shortestPath: [] };
@@ -217,7 +209,7 @@ async function visualizeAlgorithm(algorithm, grid, startNode, endNode) {
     })
   );
 
-  // Highlight visited nodes
+  // Highlight nodes
   for (const node of visitedNodes) {
     node.isVisited = true;
     drawGrid();
@@ -229,49 +221,27 @@ async function visualizeAlgorithm(algorithm, grid, startNode, endNode) {
     return;
   }
 
-  let steps = 0;
-  // Highlight the shortest path
   for (const node of shortestPath) {
     node.isPath = true;
-    console.log(++steps);
-
     drawGrid();
-    await sleep(30); // Add a delay for visualization
+    await sleep(30);
   }
 }
 
-//Helper function to add a delay
+//function to add a delay
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function resetAll() {
+  grid = initializeGrid();
+  drawGrid();
 }
 
 // Map algorithm names to functions
 const algorithms = {
   dijkstra: dijkstra,
 };
-
-// the run-algorithm button
-document.getElementById("run-algorithm").addEventListener("click", () => {
-  const startNode = grid.flat().find((cell) => cell.isStart);
-  const endNode = grid.flat().find((cell) => cell.isEnd);
-
-  if (startNode && endNode) {
-    // Get the selected algorithm
-    const selectedAlgorithm = document.getElementById("algorithm-select").value;
-    const algorithmFunction = algorithms[selectedAlgorithm]; // e.g dijkstra;
-
-    if (algorithmFunction) {
-      // Run the selected algorithm
-      visualizeAlgorithm(algorithmFunction, grid, startNode, endNode);
-    } else {
-      console.error("Algorithm not found or not implemented yet.");
-      alert("The selected algorithm is not implemented yet.");
-      return;
-    }
-  } else {
-    alert("Please place both start and end nodes.");
-  }
-});
 
 /* Buttons function handlers */
 placeStartBtn.addEventListener("click", () => {
@@ -288,6 +258,27 @@ placeWallBtn.addEventListener("click", () => {
   isPlacingWalls = true;
   isPlacingStart = false;
   isPlacingEnd = false;
+});
+
+runAlgorithmBtn.addEventListener("click", () => {
+  const startNode = grid.flat().find((cell) => cell.isStart);
+  const endNode = grid.flat().find((cell) => cell.isEnd);
+
+  if (startNode && endNode) {
+    // Get the selected algorithm
+    const selectedAlgorithm = document.getElementById("algorithm-select").value;
+    const algorithmFunction = algorithms[selectedAlgorithm]; // e.g dijkstra;
+
+    if (algorithmFunction) {
+      visualizeAlgorithm(algorithmFunction, grid, startNode, endNode);
+    } else {
+      console.error("Algorithm not found or not implemented yet.");
+      alert("The selected algorithm is not implemented yet.");
+      return;
+    }
+  } else {
+    alert("Please place both start and end nodes.");
+  }
 });
 
 resetBtn.addEventListener("click", resetAll);
