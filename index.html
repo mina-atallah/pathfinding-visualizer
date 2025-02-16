@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Pathfinding Visualizer</title>
+  </head>
+
+  <body>
+    <div class="container">
+      <nav>
+        <h3>Pathfinding Visualizer</h3>
+        <div class="actions">
+          <select name="algorithm-select" id="algorithm-select">
+            <option value="algorithm" selected disabled>
+              Select Algorithm
+            </option>
+            <option value="dijkstra">Dijkstra</option>
+            <option value="BFS">BFS</option>
+            <option value="DFS">DFS</option>
+          </select>
+        </div>
+        <ul class="btns-container">
+          <button id="run-algorithm" type="button">Run Algorithm</button>
+          <li><button id="place-start">Place Start Node</button></li>
+          <li><button id="place-end">Place End Node</button></li>
+          <li><button id="place-walls">Place Walls</button></li>
+          <li><button id="reset">Reset</button></li>
+        </ul>
+      </nav>
+
+      <div class="grid-container">
+        <canvas id="canvas-grid"></canvas>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
