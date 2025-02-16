@@ -13,8 +13,8 @@ This is a **Pathfinding Algorithm Visualizer** that allows you to see how pathfi
 
 ## Algorithms
 
-    - Currently, **Dijkstra’s Algorithm** is supported. This algorithm finds the shortest path between the start and end points on the grid, avoiding obstacles.
-    - BFS and DFS will be added.
+- Currently, **Dijkstra’s Algorithm** is supported. This algorithm finds the shortest path between the start and end points on the grid, avoiding obstacles.
+- BFS and DFS will be implemented.
 
 ## How to Use
 
