@@ -250,7 +250,7 @@ const algorithms = {
   dijkstra: dijkstra,
 };
 
-// Event listener for the run-algorithm button
+// the run-algorithm button
 document.getElementById("run-algorithm").addEventListener("click", () => {
   const startNode = grid.flat().find((cell) => cell.isStart);
   const endNode = grid.flat().find((cell) => cell.isEnd);
